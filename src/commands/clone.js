@@ -6,7 +6,7 @@ import fsExists from '../lib/fsExists';
 import ora from 'ora';
 import path from 'path';
 
-const workDir = path.join(process.cwd(), 'workbench');
+const workDir = process.cwd();
 
 function branchAndPull({ user, name, branch }) {
   return co(function* () {

@@ -6,19 +6,19 @@ import fsExists from '../lib/fsExists';
 import ora from 'ora';
 import path from 'path';
 
+const cwd = process.cwd();
+
 export const command = 'link';
 export const desc = 'link the cloned repos';
 export const builder = {}
 
 function getPackageJson({ name }) {
-  const pkg = require(path.join(process.cwd(), name, 'package.json'));
-  return {
-    [pkg.name]: {
-      path: name,
-      name: pkg.name,
-      pkg,
-    }
-  }
+  const { name: module, version, dependencies, devDependencies } = require(path.join(cwd, name, 'package.json'));
+  return { [name]: { module, version, dependencies, devDependencies } };
+}
+
+function shouldLink(src, target) {
+
 }
 
 export function handler(argv) {
@@ -31,10 +31,11 @@ export function handler(argv) {
 
   return co(function* () {
     spinner.start();
-    const results = config.repos.map(getPackageJson);
 
-    //const results = yield config.repos.map(cloneRepo);
-    //yield config.repos.map(branchAndPull);
+    const results = yield config.repos.map(getPackageJson);
+    const pkgMap = Object.assign({}, ...results)
+    console.log(pkgMap)
+
     spinner.stop();
 
     //results.forEach(result => console.log(result))
