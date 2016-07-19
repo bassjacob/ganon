@@ -6,10 +6,12 @@ import fsExists from '../lib/fsExists';
 import ora from 'ora';
 import path from 'path';
 
+const workDir = path.join(process.cwd(), 'workbench');
+
 function branchAndPull({ user, name, branch }) {
   return co(function* () {
-    yield spawn('git' , ['checkout', branch], { cwd: path.join(process.cwd(), name) })
-    yield spawn('git' , ['pull'], { cwd: path.join(process.cwd(), name) })
+    yield spawn('git' , ['checkout', branch], { cwd: path.join(workDir, name) })
+    yield spawn('git' , ['pull'], { cwd: path.join(workDir, name) })
     return `Successfully pulled latest ${user}/${name}#${branch}`;
   });
 }
@@ -18,7 +20,7 @@ function cloneRepo({ user, name, branch }) {
   return co(function* () {
     const exists = yield fsExists(name);
     if (!exists) {
-      yield spawn('git' , ['clone', `git@github.com:${user}/${name}`])
+      yield spawn('git' , ['clone', `git@github.com:${user}/${name}`], { cwd: workDir })
       return `Successfully cloned ${user}/${name}`;
     } else {
       return `${user}/${name} is already cloned.`;
@@ -39,6 +41,7 @@ export function handler(argv) {
 
   return co(function* () {
     spinner.start();
+    fs.ensureDirSync(workDir);
     const results = yield config.repos.map(cloneRepo);
     yield config.repos.map(branchAndPull);
     spinner.stop();
