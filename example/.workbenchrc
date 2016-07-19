@@ -1,7 +1,0 @@
-module.exports = {
-  configVersion: "1",
-  repos: [
-    "domain-group/fe-co-hello-world#master",
-    "domain-group/fe-build#master",
-  ]
-}
