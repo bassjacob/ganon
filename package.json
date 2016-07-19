@@ -5,7 +5,7 @@
   "cli": "build/cli.js",
   "scripts": {
     "build": "babel -Dd build src",
-    "watch": "nodemon -d 1 -w src -x npm run build",
+    "watch": "nodemon -w src -x npm run build",
     "prepublish": "npm run build"
   },
   "keywords": [],
@@ -18,6 +18,9 @@
     "nodemon": "^1.9.2"
   },
   "dependencies": {
+    "cross-spawn": "^4.0.0",
+    "fs-extra": "^0.30.0",
+    "nodegit": "^0.14.1",
     "yargs": "^4.8.1"
   }
 }
