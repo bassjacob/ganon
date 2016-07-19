@@ -5,7 +5,7 @@
   "cli": "build/cli.js",
   "scripts": {
     "build": "babel -Dd build src",
-    "watch": "nodemon -w src -x npm run build",
+    "watch": "nodemon -d 1 -w src -x npm run build",
     "prepublish": "npm run build"
   },
   "keywords": [],
@@ -17,5 +17,7 @@
     "babel-preset-es2015": "^6.9.0",
     "nodemon": "^1.9.2"
   },
-  "dependencies": {}
+  "dependencies": {
+    "yargs": "^4.8.1"
+  }
 }
