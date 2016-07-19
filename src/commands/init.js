@@ -6,27 +6,12 @@ import fsExists from '../lib/fsExists';
 export const command = 'init';
 export const desc = 'initialize the workbench';
 export const builder = {
-  dir: {
-    alias: 'd',
-    describe: 'relative path to directory to initialise the workbench in. will create if does not exist',
-    default: './',
-    type: 'string'
-  },
   repos: {
     alias: 'r',
     describe: 'space delimited list of repos to develop inside workbench. org/name#branch',
     default: [],
     type: 'array'
   }
-}
-
-function findOrCreateDir(dir) {
-  return new Promise((res, rej) => {
-    fs.ensureDir(dir, (err, data) => {
-      if (err) return rej(err);
-      return res(data);
-    });
-  });
 }
 
 function writeConfig(file, repos) {
@@ -53,10 +38,6 @@ function createFile(dir, repos) {
 export function handler(argv) {
   return co(function* () {
     const cwd = process.cwd();
-    const dir = path.join(cwd, argv.dir);
-    yield findOrCreateDir(dir);
-    yield createFile(dir, argv.repos);
-
-    console.log('init called for dir', dir, argv.repos)
+    yield createFile(cwd, argv.repos);
   }).catch(console.error.bind(console));
 }

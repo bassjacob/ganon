@@ -5,6 +5,18 @@ import parseConfig from '../parse-config';
 import fsExists from '../lib/fsExists';
 import ora from 'ora';
 
+function branchAndPull(name, branch) {
+  return co(function* () {
+    if (!exists) {
+      yield spawn('git' , ['checkout', branch], {})
+      yield spawn('git' , ['clone', `git@github.com:${user}/${name}`])
+      return `Successfully cloned ${user}/${name}`;
+    } else {
+      return `${user}/${name} is already cloned.`;
+    }
+  });
+}
+
 function cloneRepo({ user, name, branch }) {
   return co(function* () {
     const exists = yield fsExists(name);
@@ -30,6 +42,7 @@ export function handler(argv) {
     spinner.start();
     const results = yield config.repos.map(cloneRepo)
     spinner.stop();
+
     results.forEach(result => console.log(result))
   }).catch(err => {
     spinner.stop();
