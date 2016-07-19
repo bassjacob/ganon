@@ -18,15 +18,9 @@ function cloneRepo({ user, name, branch }) {
 }
 
 export const command = 'clone';
+
 export const desc = 'clone the repos in the configuration into the workbench';
-export const builder = {
-  dir: {
-    alias: 'd',
-    describe: '',
-    default: './',
-    type: 'string'
-  }
-}
+
 export function handler(argv) {
   const config = parseConfig();
   const spinner = ora();
