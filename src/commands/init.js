@@ -1,6 +1,7 @@
 import fs from 'fs-extra';
 import path from 'path';
 import co from 'co';
+import fsExists from '../lib/fsExists';
 
 export const command = 'init';
 export const desc = 'initialize the workbench';
@@ -28,16 +29,6 @@ function findOrCreateDir(dir) {
   });
 }
 
-function fileExists(file) {
-  return new Promise((res, rej) => {
-    fs.stat(file, err => {
-      if (!err) return res(true);
-      else if(err.code === 'ENOENT') return res(false);
-      else return rej(err);
-    });
-  });
-}
-
 function writeConfig(file, repos) {
   const contents = `module.exports = ${JSON.stringify({ repos }, null, 2)}`;
   return new Promise((res, rej) => {
@@ -52,7 +43,7 @@ function createFile(dir, repos) {
   const filePath = path.join(dir, '.workbenchrc');
 
   return co(function* () {
-    const exists = yield fileExists(filePath);
+    const exists = yield fsExists(filePath);
     if (!exists) {
       yield writeConfig(filePath, repos);
     }
