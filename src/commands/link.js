@@ -7,7 +7,7 @@ import ora from 'ora';
 import path from 'path';
 import semver from 'semver';
 
-import { map, mapValues, reduce, forEach } from 'lodash';
+import { isObject, map, mapValues, reduce, forEach } from 'lodash';
 
 const cwd = process.cwd();
 
@@ -17,13 +17,13 @@ export const builder = {}
 
 function installDependencies(repo) {
   return co(function* () {
-    yield spawn('npm' , ['install'], { cwd: path.join(cwd, repo), stdio: 'inherit' })
+    yield spawn('npm' , ['install'], { cwd: path.join(cwd, repo) })
   });
 }
 
 function flattenDependencies(repo) {
   return co(function* () {
-    yield spawn('npm' , ['dedupe'], { cwd: path.join(cwd, repo), stdio: 'inherit' })
+    yield spawn('npm' , ['dedupe'], { cwd: path.join(cwd, repo) })
   });
 }
 
@@ -47,6 +47,14 @@ function shouldLink({ name, version }, { dependencies, devDependencies }) {
 
 function pkgjson({ name, version }) {
   return JSON.stringify({ name, version })
+}
+
+function placeholderBin(bin, name, modPath) {
+  if (isObject(bin)) {
+    return map(bin, (v, k) => ({ name: k, path: path.join(modPath, v) }));
+  }
+
+  return [{ name, path: path.join(modPath, bin) }];
 }
 
 export function handler(argv) {
@@ -74,40 +82,43 @@ export function handler(argv) {
       return {
         name: a.name,
         version: a.version,
+        bin: a.bin,
         targets: toLink
       }
     });
 
-    forEach(linkables, (v, k) => {
-      forEach(v.targets, r => fs.outputFile(path.join(cwd, r, `node_modules/${v.name}/package.json`), pkgjson(v)))
-    })
+    // forEach(linkables, (v, k) => {
+    //   forEach(v.targets, r => fs.copy(path.join(cwd, k, 'package.json'), path.join(cwd, r, `node_modules/${v.name}/package.json`)))
+    // })
 
-    yield map(config.repos, ({name}) => installDependencies(name))
+    // yield map(config.repos, ({name}) => installDependencies(name))
 
-    forEach(linkables, (v, k) => {
-      forEach(v.targets, r => fs.copy(path.join(cwd, k, 'node_modules'), path.join(cwd, r, `node_modules/${v.name}/node_modules`)))
-      forEach(v.targets, r => {
-        require('glob').sync(path.join(cwd, k, '!(node_modules|.git)')).forEach(f => {
-          const newFile = f.replace(k, path.join(r, 'node_modules', v.name))
-          fs.ensureSymlinkSync(f, newFile)
-        })
-      })
-    })
+    // forEach(linkables, (v, k) => {
+    //   forEach(v.targets, r => {
+    //     fs.copy(path.join(cwd, k, 'node_modules'), path.join(cwd, r, `node_modules/${v.name}/node_modules`))
+    //     require('glob').sync(path.join(cwd, k, '!(node_modules|.git)')).forEach(f => {
+    //       const newFile = f.replace(k, path.join(r, 'node_modules', v.name))
+    //       fs.ensureSymlinkSync(f, newFile)
+    //     })
+    //   })
+    // })
 
-    yield map(config.repos, ({name}) => flattenDependencies(name))
-
-    yield map(linkables, (k, {name, scripts}) => scripts && scripts.prepublish && runPrePublish(path.join(cwd, r, `node_modules/${name}`)))
-
-    forEach(linkables, (v, k) => {
-      forEach(v.targets, r => {
-        require('glob').sync(path.join(cwd, k, '!(node_modules|.git)')).forEach(f => {
-          const newFile = f.replace(k, path.join(r, 'node_modules', v.name))
-          fs.ensureSymlinkSync(f, newFile)
-        })
-      })
-    })
+    // yield map(linkables, (k, {name, scripts}) => scripts && scripts.prepublish && runPrePublish(path.join(cwd, r, `node_modules/${name}`)))
 
     spinner.stop();
+    forEach(linkables, (v, k) => {
+      forEach(v.targets, r => {
+        require('glob').sync(path.join(cwd, k, '!(node_modules|.git)')).forEach(f => {
+          const newFile = f.replace(k, path.join(r, 'node_modules', v.name))
+          fs.ensureSymlinkSync(f, newFile)
+        })
+        placeholderBin(v.bin || {}, v.name, path.join(cwd, k)).map(a => {
+          const target = path.join(cwd, r, 'node_modules/.bin', a.name)
+          fs.ensureSymlinkSync(a.path, target)
+        })
+      })
+    })
+
   }).catch(err => {
     spinner.stop();
     console.error(err);
