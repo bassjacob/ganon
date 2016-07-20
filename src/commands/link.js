@@ -54,6 +54,10 @@ function placeholderBin(bin, name, modPath) {
     return map(bin, (v, k) => ({ name: k, path: path.join(modPath, v) }));
   }
 
+  if (name.indexOf('/')) {
+    name = name.split('/')[1];
+  }
+
   return [{ name, path: path.join(modPath, bin) }];
 }
 
