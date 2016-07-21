@@ -2,7 +2,7 @@ import path from 'path';
 
 function getConfigFromFile() {
   const cwd = process.cwd();
-  const configPath = path.join(cwd, '.workbenchrc')
+  const configPath = path.join(cwd, '.ganonrc')
 
   return require(configPath);
 }

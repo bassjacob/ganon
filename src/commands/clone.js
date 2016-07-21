@@ -30,7 +30,7 @@ function cloneRepo({ user, name, branch }) {
 
 export const command = 'clone';
 
-export const desc = 'clone the repos in the configuration into the workbench';
+export const desc = 'clone the repos in the configuration into the ganon';
 
 export const builder = {}
 

@@ -4,11 +4,11 @@ import co from 'co';
 import fsExists from '../lib/fsExists';
 
 export const command = 'init';
-export const desc = 'initialize the workbench';
+export const desc = 'initialize the ganon';
 export const builder = {
   repos: {
     alias: 'r',
-    describe: 'space delimited list of repos to develop inside workbench. org/name#branch',
+    describe: 'space delimited list of repos to develop inside ganon. org/name#branch',
     default: [],
     type: 'array'
   }
@@ -25,7 +25,7 @@ function writeConfig(file, repos) {
 }
 
 function createFile(dir, repos) {
-  const filePath = path.join(dir, '.workbenchrc');
+  const filePath = path.join(dir, '.ganonrc');
 
   return co(function* () {
     const exists = yield fsExists(filePath);

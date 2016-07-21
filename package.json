@@ -1,10 +1,10 @@
 {
-  "name": "workbench",
+  "name": "ganon",
   "version": "0.0.1",
   "description": "",
   "main": "build/cli.js",
   "bin": {
-    "workbench": "build/cli.js"
+    "ganon": "build/cli.js"
   },
   "scripts": {
     "build": "babel -Dd build src",
