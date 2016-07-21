@@ -21,12 +21,6 @@ function installDependencies(repo) {
   });
 }
 
-function flattenDependencies(repo) {
-  return co(function* () {
-    yield spawn('npm' , ['dedupe'], { cwd: path.join(cwd, repo) })
-  });
-}
-
 function runPrePublish(folder) {
   return co(function* () {
     yield spawn('npm' , ['run', 'prepublish'], { cwd: folder })
@@ -91,23 +85,23 @@ export function handler(argv) {
       }
     });
 
-    // forEach(linkables, (v, k) => {
-    //   forEach(v.targets, r => fs.copy(path.join(cwd, k, 'package.json'), path.join(cwd, r, `node_modules/${v.name}/package.json`)))
-    // })
+    forEach(linkables, (v, k) => {
+      forEach(v.targets, r => fs.copy(path.join(cwd, k, 'package.json'), path.join(cwd, r, `node_modules/${v.name}/package.json`)))
+    })
 
-    // yield map(config.repos, ({name}) => installDependencies(name))
+    yield map(config.repos, ({name}) => installDependencies(name))
 
-    // forEach(linkables, (v, k) => {
-    //   forEach(v.targets, r => {
-    //     fs.copy(path.join(cwd, k, 'node_modules'), path.join(cwd, r, `node_modules/${v.name}/node_modules`))
-    //     require('glob').sync(path.join(cwd, k, '!(node_modules|.git)')).forEach(f => {
-    //       const newFile = f.replace(k, path.join(r, 'node_modules', v.name))
-    //       fs.ensureSymlinkSync(f, newFile)
-    //     })
-    //   })
-    // })
+    forEach(linkables, (v, k) => {
+      forEach(v.targets, r => {
+        fs.copy(path.join(cwd, k, 'node_modules'), path.join(cwd, r, `node_modules/${v.name}/node_modules`))
+        require('glob').sync(path.join(cwd, k, '!(node_modules|.git)')).forEach(f => {
+          const newFile = f.replace(k, path.join(r, 'node_modules', v.name))
+          fs.ensureSymlinkSync(f, newFile)
+        })
+      })
+    })
 
-    // yield map(linkables, (k, {name, scripts}) => scripts && scripts.prepublish && runPrePublish(path.join(cwd, r, `node_modules/${name}`)))
+    yield map(linkables, (k, {name, scripts}) => scripts && scripts.prepublish && runPrePublish(path.join(cwd, r, `node_modules/${name}`)))
 
     spinner.stop();
     forEach(linkables, (v, k) => {
