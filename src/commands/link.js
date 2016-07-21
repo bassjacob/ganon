@@ -85,14 +85,15 @@ export function handler(argv) {
       }
     });
 
-    forEach(linkables, (v, k) => {
-      forEach(v.targets, r => fs.copy(path.join(cwd, k, 'package.json'), path.join(cwd, r, `node_modules/${v.name}/package.json`)))
-    })
+    // forEach(linkables, (v, k) => {
+    //   forEach(v.targets, r => fs.copy(path.join(cwd, k, 'package.json'), path.join(cwd, r, `node_modules/${v.name}/package.json`)))
+    // })
 
     yield map(config.repos, ({name}) => installDependencies(name))
 
     forEach(linkables, (v, k) => {
       forEach(v.targets, r => {
+        fs.removeSync(path.join(cwd, r, 'node_modules', v.name))
         fs.copy(path.join(cwd, k, 'node_modules'), path.join(cwd, r, `node_modules/${v.name}/node_modules`))
         require('glob').sync(path.join(cwd, k, '!(node_modules|.git)')).forEach(f => {
           const newFile = f.replace(k, path.join(r, 'node_modules', v.name))
