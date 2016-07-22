@@ -85,9 +85,9 @@ export function handler(argv) {
       }
     });
 
-    // forEach(linkables, (v, k) => {
-    //   forEach(v.targets, r => fs.copy(path.join(cwd, k, 'package.json'), path.join(cwd, r, `node_modules/${v.name}/package.json`)))
-    // })
+    forEach(linkables, (v, k) => {
+      forEach(v.targets, r => fs.copy(path.join(cwd, k, 'package.json'), path.join(cwd, r, `node_modules/${v.name}/package.json`)))
+    })
 
     yield map(config.repos, ({name}) => installDependencies(name))
 
@@ -117,7 +117,6 @@ export function handler(argv) {
         })
       })
     })
-
   }).catch(err => {
     spinner.stop();
     console.error(err);
