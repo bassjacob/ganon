@@ -16,10 +16,13 @@
   "license": "ISC",
   "preferGlobal": true,
   "devDependencies": {
-    "babel-cli": "^6.10.1",
+    "babel-cli": "^6.11.4",
     "babel-plugin-transform-async-to-generator": "^6.8.0",
-    "babel-plugin-transform-es2015-modules-commonjs": "^6.10.3",
-    "nodemon": "^1.9.2"
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.11.5",
+    "eslint": "^3.2.2",
+    "eslint-config-airbnb-base": "^5.0.1",
+    "eslint-plugin-import": "^1.12.0",
+    "nodemon": "^1.10.0"
   },
   "dependencies": {
     "buffered-spawn": "^3.2.0",
@@ -27,9 +30,9 @@
     "co": "^4.6.0",
     "fs-extra": "^0.30.0",
     "glob": "^7.0.5",
-    "lodash": "^4.13.1",
+    "lodash": "^4.14.1",
     "node-notifier": "^4.6.0",
-    "ora": "^0.2.3",
+    "ora": "^0.3.0",
     "semver": "^5.3.0",
     "yargs": "^4.8.1"
   }

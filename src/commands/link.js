@@ -122,4 +122,3 @@ export function handler(argv) {
     console.error(err);
   });
 }
-

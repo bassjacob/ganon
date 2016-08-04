@@ -10,9 +10,9 @@ export const builder = {
     alias: 'r',
     describe: 'space delimited list of repos to develop inside ganon. org/name#branch',
     default: [],
-    type: 'array'
-  }
-}
+    type: 'array',
+  },
+};
 
 function writeConfig(file, repos) {
   const contents = `module.exports = ${JSON.stringify({ repos }, null, 2)}`;
