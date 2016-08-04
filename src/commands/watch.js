@@ -6,12 +6,12 @@ import parseConfig from '../parse-config.js';
 
 export const command = 'watch';
 export const desc = 'watch and re-link the cloned repos';
-export const builder = {}
+export const builder = {};
 
 export function handler() {
   const { repos } = parseConfig();
   const folders = repos.map(r => r.name);
-  const paths = folders.map(f => `./${f}/package.json`)
+  const paths = folders.map(f => `./${f}/package.json`);
   let linking = false;
   chokidar.watch(paths).on('all', () => {
     if (!linking) {
@@ -28,5 +28,5 @@ export function handler() {
         }))
         .then(() => linking = false);
     }
-  })
+  });
 }
