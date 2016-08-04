@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+/* eslint-disable global-require */
+
 import yargs from 'yargs';
 
 const commands = [
@@ -8,7 +10,7 @@ const commands = [
   './commands/link',
   './commands/bootstrap',
   './commands/sweep',
-].map(command => require(command).default)
+].map(command => require(command).default);
 
 const argv = yargs.usage('Usage: $0 <command> [options]')
                   .commandDir('commands')
